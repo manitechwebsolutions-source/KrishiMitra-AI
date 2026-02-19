@@ -1,23 +1,30 @@
 # KrishiMitra-AI
 🌾 KrishiMitra AI
+
 An Offline AI-Powered Agriculture Assistant built to support Indian farmers with crop disease detection, cultivation guidance, calculators, and multi-language support — completely free and usable without login.
+
 🚀 Vision
 KrishiMitra AI aims to provide intelligent, reliable, and offline agricultural support to farmers across India, especially in rural areas with limited internet connectivity.
+
 🎯 Core Features
+
 🌿 1. Instant Crop Disease Detection
 Uses TensorFlow Lite model
 Works completely offline
 Predicts crop disease from leaf image
 Displays step-by-step solution from inbuilt data
+
 💬 2. AI Farming Guide (Offline Knowledge Base)
 Step-by-step cultivation process
 Crop calendar
 Seasonal crop suggestions
 Structured inbuilt agricultural data
+
 🧪 3. Fertilizer Calculator
 Based on crop type
 Field size input (acres)
 Soil type based recommendations
+
 💰 4. Profit Calculator
 Yield estimation
 Market price input
