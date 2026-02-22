@@ -8,3 +8,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/language': (context) => const LanguageScreen(),
   '/home': (context) => const HomeScreen(),
 };
+
+// Optional: Route names as constants to avoid typos
+abstract class AppRoutes {
+  static const String splash = '/splash';
+  static const String language = '/language';
+  static const String home = '/home';
+}

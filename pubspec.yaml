@@ -20,9 +20,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/images/
-    - assets/model/
-    - assets/data/
-    - assets/lang/
+  # Assets section removed - will be added manually when needed
