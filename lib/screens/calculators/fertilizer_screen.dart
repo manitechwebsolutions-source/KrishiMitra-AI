@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/fertilizer_calculator.dart';
+import 'package:krishimitra_ai/utils/fertilizer_calculator.dart';
 
 class FertilizerScreen extends StatefulWidget {
   const FertilizerScreen({super.key});
@@ -9,110 +9,92 @@ class FertilizerScreen extends StatefulWidget {
 }
 
 class _FertilizerScreenState extends State<FertilizerScreen> {
+  final TextEditingController _areaController = TextEditingController();
+
   String selectedCrop = "Paddy";
-  final TextEditingController acreController = TextEditingController();
 
-  String result = "";
+  Map<String, double>? result;
 
-  /// Major Crops in India
-  final List<String> crops = [
-    "Paddy",
-    "Wheat",
-    "Maize",
-    "Cotton",
-    "Sugarcane",
-    "Groundnut",
-    "Soybean",
-    "Mustard",
-    "Tomato",
-    "Potato",
-    "Onion",
-    "Chickpea",
-    "Turmeric",
-    "Sunflower",
-    "Barley",
-    "Jowar",
-    "Bajra"
-  ];
+  final List<String> crops = ["Paddy", "Tomato", "Cotton", "Maize"];
 
-  void calculate() {
-    double acres = double.tryParse(acreController.text) ?? 0;
+  void calculateFertilizer() {
+    final area = double.tryParse(_areaController.text);
 
-    if (acres <= 0) {
-      setState(() {
-        result = "Please enter valid field size.";
-      });
+    if (area == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter valid land area")),
+      );
       return;
     }
 
-    final fertilizerData =
-        FertilizerCalculator.calculate(selectedCrop, acres);
+    final output =
+    FertilizerCalculator.calculate(selectedCrop, area);
 
     setState(() {
-      result =
-          "Recommended Fertilizers:\n\nUrea: ${fertilizerData['urea']} kg\nDAP: ${fertilizerData['dap']} kg\nPotash: ${fertilizerData['potash']} kg";
+      result = output;
     });
+  }
+
+  @override
+  void dispose() {
+    _areaController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5E6D3),
-
       appBar: AppBar(
-        title: const Text("Fertilizer Calculator"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text('Fertilizer Calculator'),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
-
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// LAND AREA
+            const Text(
+              "Enter Land Area (in acres)",
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
 
-            /// SELECT CROP
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: DropdownButtonFormField(
-                initialValue: selectedCrop,
-                items: crops
-                    .map((crop) => DropdownMenuItem(
-                          value: crop,
-                          child: Text(crop),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCrop = value!;
-                  });
-                },
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  labelText: "Select Crop",
+            TextField(
+              controller: _areaController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: "e.g. 2.5",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            /// FIELD SIZE INPUT
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                controller: acreController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(15),
-                  border: InputBorder.none,
-                  labelText: "Field Size (Acres)",
+            /// CROP DROPDOWN (Better UX than typing)
+            const Text(
+              "Select Crop",
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+
+            DropdownButtonFormField<String>(
+              value: selectedCrop,
+              items: crops.map((crop) {
+                return DropdownMenuItem(
+                  value: crop,
+                  child: Text(crop),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCrop = value!;
+                });
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
@@ -123,39 +105,52 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  padding: const EdgeInsets.all(15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                onPressed: calculate,
-                child: const Text(
-                  "Calculate Fertilizer",
-                  style: TextStyle(fontSize: 16),
-                ),
+                onPressed: calculateFertilizer,
+                child: const Text("Calculate"),
               ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            /// RESULT BOX
-            if (result.isNotEmpty)
+            /// RESULT DISPLAY
+            if (result != null)
               Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(
-                  result,
-                  style: const TextStyle(fontSize: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Recommended Fertilizer:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    _resultItem("Urea", result!["urea"]!),
+                    _resultItem("DAP", result!["dap"]!),
+                    _resultItem("Potash", result!["potash"]!),
+                  ],
                 ),
-              )
+              ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// RESULT ROW
+  Widget _resultItem(String title, double value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Text(
+        "$title: ${value.toStringAsFixed(2)} kg",
+        style: const TextStyle(fontSize: 15),
       ),
     );
   }

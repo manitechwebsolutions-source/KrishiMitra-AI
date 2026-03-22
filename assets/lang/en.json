@@ -1,10 +1,14 @@
 {
-  "home": "Home",
-  "fertilizer_calculator": "Fertilizer Calculator",
-  "profit_calculator": "Profit Calculator",
-  "disease_detection": "Disease Detection",
-  "government_schemes": "Government Schemes",
-  "select_crop": "Select Crop",
-  "field_size": "Field Size (Acres)",
-  "calculate": "Calculate"
+  "hello_welcome": "Hello, Welcome 👋",
+  "app_name": "KrishiMitra",
+  "farm_location": "Your Farm Location",
+  "fertilizer": "Fertilizer",
+  "profit_calc": "Profit Calc",
+  "disease_detect": "Disease Detect",
+  "gov_schemes": "Gov Schemes",
+  "commodities": "Commodities & Food",
+  "rice": "Rice",
+  "corn": "Corn",
+  "grapes": "Grapes",
+  "potato": "Potato"
 }

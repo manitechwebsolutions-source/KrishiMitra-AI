@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme.dart';
-import '../../services/language_service.dart';   // ✅ Added
+import 'package:krishimitra_ai/core/theme.dart';
+import 'package:krishimitra_ai/main.dart'; // ✅ IMPORTANT
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -12,13 +12,8 @@ class LanguageScreen extends StatefulWidget {
 class _LanguageScreenState extends State<LanguageScreen> {
   String _selectedLanguage = '';
 
+  /// ✅ Only English + Telugu
   final List<Map<String, dynamic>> languages = [
-    {
-      'name': 'हिन्दी (Hindi)',
-      'code': 'hi',
-      'native': 'Hindi',
-      'icon': Icons.translate,
-    },
     {
       'name': 'English',
       'code': 'en',
@@ -31,55 +26,35 @@ class _LanguageScreenState extends State<LanguageScreen> {
       'native': 'Telugu',
       'icon': Icons.translate,
     },
-    {
-      'name': 'ಕನ್ನಡ (Kannada)',
-      'code': 'kn',
-      'native': 'Kannada',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'தமிழ் (Tamil)',
-      'code': 'ta',
-      'native': 'Tamil',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'मराठी (Marathi)',
-      'code': 'mr',
-      'native': 'Marathi',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'ગુજરાતી (Gujarati)',
-      'code': 'gu',
-      'native': 'Gujarati',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'ଓଡ଼ିଆ (Odia)',
-      'code': 'or',
-      'native': 'Odia',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'ਪੰਜਾਬੀ (Punjabi)',
-      'code': 'pa',
-      'native': 'Punjabi',
-      'icon': Icons.translate,
-    },
-    {
-      'name': 'বাংলা (Bengali)',
-      'code': 'bn',
-      'native': 'Bengali',
-      'icon': Icons.translate,
-    },
   ];
+
+  void _selectLanguage(String code, String name) async {
+    setState(() {
+      _selectedLanguage = code;
+    });
+
+    /// ✅ THIS is the correct way (triggers rebuild)
+    await KrishiMitraApp.setLocale(context, code);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$name selected'),
+        backgroundColor: FarmColors.leafGreen,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+
+    /// Navigate after small delay
+    Future.delayed(const Duration(milliseconds: 700), () {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Language / भाषा चुनें'),
+        title: const Text('Select Language / భాషను ఎంచుకోండి'),
         backgroundColor: FarmColors.leafGreen,
         foregroundColor: Colors.white,
       ),
@@ -96,13 +71,31 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
         child: Column(
           children: [
+            const SizedBox(height: 20),
+
+            const Text(
+              "Choose Your Language",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            const Text(
+              "మీ భాషను ఎంచుకోండి",
+              style: TextStyle(color: Colors.black54),
+            ),
+
+            const SizedBox(height: 20),
+
+            /// LANGUAGE LIST
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: languages.length,
                 itemBuilder: (context, index) {
                   final language = languages[index];
-                  final isSelected = _selectedLanguage == language['code'];
+                  final isSelected =
+                      _selectedLanguage == language['code'];
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12),
@@ -110,7 +103,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                       side: isSelected
-                          ? BorderSide(color: FarmColors.leafGreen, width: 2)
+                          ? BorderSide(
+                          color: FarmColors.leafGreen, width: 2)
                           : BorderSide.none,
                     ),
                     child: ListTile(
@@ -120,71 +114,55 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             : FarmColors.lightGreen,
                         child: Icon(
                           language['icon'],
-                          color: isSelected ? Colors.white : FarmColors.darkGreen,
+                          color: isSelected
+                              ? Colors.white
+                              : FarmColors.darkGreen,
                         ),
                       ),
                       title: Text(
                         language['name'],
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? FarmColors.darkGreen : Colors.black87,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? FarmColors.darkGreen
+                              : Colors.black87,
                         ),
                       ),
                       subtitle: Text(language['native']),
                       trailing: isSelected
-                          ? Icon(Icons.check_circle, color: FarmColors.leafGreen)
+                          ? Icon(Icons.check_circle,
+                          color: FarmColors.leafGreen)
                           : null,
-                      onTap: () async {      // ✅ Added async
-                        setState(() {
-                          _selectedLanguage = language['code'];
-                        });
-
-                        /// ✅ Load selected language JSON
-                        await LanguageService.loadLanguage(language['code']);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${language['name']} selected'),
-                            backgroundColor: FarmColors.leafGreen,
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
-
-                        Future.delayed(const Duration(milliseconds: 800), () {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        });
-                      },
+                      onTap: () =>
+                          _selectLanguage(language['code'], language['name']),
                     ),
                   );
                 },
               ),
             ),
 
+            /// CONTINUE BUTTON
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _selectedLanguage.isNotEmpty
-                      ? () async {
-
-                          /// ✅ Load selected language
-                          await LanguageService.loadLanguage(_selectedLanguage);
-
-                          Navigator.pushReplacementNamed(context, '/home');
-                        }
+                      ? () {
+                    Navigator.pushReplacementNamed(context, '/home');
+                  }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: FarmColors.leafGreen,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: const Text(
-                    'Continue / जारी रखें',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    'Continue / కొనసాగించండి',
+                    style:
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
