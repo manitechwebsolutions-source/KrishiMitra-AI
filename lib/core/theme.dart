@@ -5,7 +5,10 @@ final ThemeData appTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   useMaterial3: true,
 
-  // AppBar Theme
+  /// GLOBAL VISUAL DENSITY (better alignment)
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+
+  /// APP BAR
   appBarTheme: const AppBarTheme(
     centerTitle: true,
     elevation: 0,
@@ -14,43 +17,50 @@ final ThemeData appTheme = ThemeData(
     titleTextStyle: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w600,
+      height: 1.2, // better vertical alignment
       color: Colors.white,
     ),
   ),
 
-  // Text Themes
+  /// TEXT THEME (aligned spacing + height)
   textTheme: const TextTheme(
     headlineLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      color: Color(0xFF1E3A2E), // Dark green
+      height: 1.2,
+      color: Color(0xFF1E3A2E),
     ),
     headlineMedium: TextStyle(
       fontSize: 28,
       fontWeight: FontWeight.w600,
+      height: 1.25,
       color: Color(0xFF1E3A2E),
     ),
     titleLarge: TextStyle(
       fontSize: 22,
       fontWeight: FontWeight.w600,
+      height: 1.3,
       color: Color(0xFF1E3A2E),
     ),
     bodyLarge: TextStyle(
       fontSize: 16,
+      height: 1.4,
       color: Color(0xFF2E5A3A),
     ),
     bodyMedium: TextStyle(
       fontSize: 14,
+      height: 1.4,
       color: Color(0xFF4A6F4A),
     ),
   ),
 
-  // Button Themes
+  /// ELEVATED BUTTON
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Colors.green,
       foregroundColor: Colors.white,
       minimumSize: const Size(double.infinity, 50),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -61,10 +71,12 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
+  /// OUTLINED BUTTON
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       foregroundColor: Colors.green,
       minimumSize: const Size(double.infinity, 50),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       side: const BorderSide(color: Colors.green, width: 1.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -76,10 +88,12 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
-  // Input Decoration (for forms)
+  /// INPUT FIELDS
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: Colors.grey.shade50,
+    contentPadding:
+    const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // FIXED
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide.none,
@@ -97,23 +111,22 @@ final ThemeData appTheme = ThemeData(
       borderSide: const BorderSide(color: Colors.red, width: 1),
     ),
     labelStyle: const TextStyle(color: Color(0xFF4A6F4A)),
-    hintStyle: TextStyle(color: Colors.grey.shade400),
   ),
 
-  // Card Theme - FIXED: Changed from CardTheme to CardThemeData
+  /// CARD THEME (IMPORTANT ALIGNMENT FIX)
   cardTheme: CardThemeData(
     elevation: 2,
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
     color: Colors.white,
-    margin: const EdgeInsets.all(8),
   ),
 
-  // Color Scheme
+  /// COLOR SCHEME
   colorScheme: const ColorScheme.light(
     primary: Colors.green,
-    secondary: Color(0xFFFFA726), // Orange/amber for accents (sun/farming)
+    secondary: Color(0xFFFFA726),
     tertiary: Color(0xFF795548),
     surface: Colors.white,
     onPrimary: Colors.white,
@@ -121,13 +134,13 @@ final ThemeData appTheme = ThemeData(
     error: Colors.red,
   ),
 
-  // Icon Theme
+  /// ICONS
   iconTheme: const IconThemeData(
     color: Colors.green,
     size: 24,
   ),
 
-  // Divider Theme
+  /// DIVIDER
   dividerTheme: DividerThemeData(
     color: Colors.green.shade100,
     thickness: 1,
@@ -135,7 +148,7 @@ final ThemeData appTheme = ThemeData(
   ),
 );
 
-// Additional color constants for specific farming-related features
+/// FARM COLORS (UNCHANGED)
 class FarmColors {
   static const Color soilBrown = Color(0xFF795548);
   static const Color sunYellow = Color(0xFFFFA726);
