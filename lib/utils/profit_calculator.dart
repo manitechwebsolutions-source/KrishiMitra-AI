@@ -8,41 +8,54 @@ class ProfitCalculator {
     required String crop,
     required double acres,
 
-    // 🌾 Input in KINTA (Quintal)
+    /// 🌾 Input in Quintal
     required double yieldPerAcreKinta,
 
     required double marketPricePerKg,
 
-    // 💸 Costs
+    /// 💸 Costs
     required double seedCostPerAcre,
     required double fertilizerCostPerAcre,
     required double laborCostPerAcre,
     required double irrigationCostPerAcre,
     double miscCostPerAcre = 0,
   }) {
-    /// 🌾 MSP (₹/kg)
+
+    /// 🌾 MSP (₹ per Quintal)
     final Map<String, double> mspRates = {
-      "Paddy": 21.83,
-      "Wheat": 22.75,
-      "Cotton": 66.0,
-      "Maize": 20.9,
+      "Paddy": 2183,
+      "Wheat": 2275,
+      "Maize": 2090,
+      "Cotton": 6620,
+      "Gram": 5440,
+      "Mustard": 5650,
     };
 
-    double msp = mspRates[crop] ?? marketPricePerKg;
+    /// Convert MSP → ₹/kg
+    double msp = mspRates.containsKey(crop)
+        ? mspRates[crop]! / 100
+        : 0;
+
+    /// 🌶️ Volatile Crops
+    final List<String> volatileCrops = [
+      "Tomato",
+      "Onion",
+      "Potato",
+      "Chilli",
+      "Capsicum",
+    ];
+
+    bool isVolatile = volatileCrops.contains(crop);
 
     /// 🔁 Convert Kinta → KG
     double yieldPerAcreKg = UnitConverter.kintaToKg(yieldPerAcreKinta);
 
-    /// 💰 Choose better price
-    double effectivePrice =
-    marketPricePerKg < msp ? msp : marketPricePerKg;
-
-    /// 🌾 Yield
+    /// 🌾 Total Yield
     double totalYieldKg = yieldPerAcreKg * acres;
     double totalYieldKinta = UnitConverter.kgToKinta(totalYieldKg);
 
-    /// 💵 Revenue
-    double revenue = totalYieldKg * effectivePrice;
+    /// 💵 Revenue (REAL market price)
+    double revenue = totalYieldKg * marketPricePerKg;
 
     /// 💸 Cost
     double totalCostPerAcre = seedCostPerAcre +
@@ -58,49 +71,77 @@ class ProfitCalculator {
 
     /// 📈 Metrics
     double roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
-    double profitMargin = revenue > 0 ? (profit / revenue) * 100 : 0;
-    double breakEvenPrice =
-    totalYieldKg > 0 ? totalCost / totalYieldKg : 0;
+    double margin = revenue > 0 ? (profit / revenue) * 100 : 0;
 
-    /// ➕ Extra Metrics
+    /// 🧮 Cost per kg
     double costPerKg =
     totalYieldKg > 0 ? totalCost / totalYieldKg : 0;
 
+    /// ⚖️ Break-even price
+    double breakEvenPrice =
+    totalYieldKg > 0 ? totalCost / totalYieldKg : 0;
+
+    /// 🌾 Profit per acre
     double profitPerAcre =
     acres > 0 ? profit / acres : 0;
 
     /// 🧠 Insights
     List<String> insights = [];
 
-    if (marketPricePerKg < msp) {
-      insights.add(
-          "Market price is below MSP. Selling at MSP is safer.");
-    }
+    const double epsilon = 0.01;
 
-    if (fertilizerCostPerAcre > seedCostPerAcre * 2) {
-      insights.add(
-          "High fertilizer cost detected. Consider optimizing usage.");
-    }
-
+    /// 📉 Loss
     if (profit < 0) {
       insights.add(
-          "You are in loss. Reduce costs or wait for better market price.");
+          "You are making a loss. Reduce costs or wait for better price.");
     }
 
-    if (roi > 50) {
-      insights.add("Excellent ROI. This is a highly profitable crop.");
-    }
-
-    if (profitMargin < 20) {
+    /// 📊 ROI
+    if (roi < 20) {
       insights.add(
-          "Low profit margin. Try increasing selling price or reducing costs.");
+          "Low ROI. Improve yield or reduce input costs.");
     }
 
+    /// ⚖️ Break-even check
+    if (marketPricePerKg < breakEvenPrice) {
+      insights.add(
+          "Market price is below break-even. Selling now may cause loss.");
+    }
+
+    /// 🌾 MSP comparison (FIXED with epsilon)
+    if (msp > 0 && marketPricePerKg < msp - epsilon) {
+      insights.add(
+          "Market price is below MSP. Consider government procurement.");
+    } else if (msp > 0 &&
+        (marketPricePerKg - msp).abs() <= epsilon) {
+      insights.add(
+          "Market price is approximately equal to MSP.");
+    }
+
+    /// 🌶️ Volatility
+    if (isVolatile) {
+      insights.add(
+          "This crop has high price volatility. Timing is very important.");
+    }
+
+    /// 💸 Fertilizer warning
+    if (fertilizerCostPerAcre > seedCostPerAcre * 2) {
+      insights.add(
+          "Fertilizer cost is high. Try optimizing usage.");
+    }
+
+    /// 🌾 Yield check
     if (yieldPerAcreKinta < 10) {
       insights.add(
-          "Yield per acre is low compared to typical AP/Telangana farming.");
+          "Yield per acre seems low. Check farming practices.");
     }
 
+    /// 🚀 High profit
+    if (profit > 0 && roi > 50) {
+      insights.add("Excellent profitability. Great job 👍");
+    }
+
+    /// ✅ Final Output
     return {
       "yieldKg": totalYieldKg,
       "yieldKinta": totalYieldKinta,
@@ -108,12 +149,12 @@ class ProfitCalculator {
       "cost": totalCost,
       "profit": profit,
       "roi": roi,
-      "margin": profitMargin,
+      "margin": margin,
       "breakEvenPrice": breakEvenPrice,
       "msp": msp,
-      "effectivePrice": effectivePrice,
       "costPerKg": costPerKg,
       "profitPerAcre": profitPerAcre,
+      "isVolatile": isVolatile,
       "insights": insights,
     };
   }
