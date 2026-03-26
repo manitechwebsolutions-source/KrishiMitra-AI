@@ -20,12 +20,21 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
   String selectedCrop = "Paddy";
 
-  /// 🌾 Crop + Telugu Mapping
+  /// 🌾 Expanded Crop List
   final Map<String, String> cropNames = {
     "Paddy": "వరి",
-    "Tomato": "టమోటా",
-    "Cotton": "పత్తి",
+    "Wheat": "గోధుమలు",
     "Maize": "మొక్కజొన్న",
+    "Cotton": "పత్తి",
+    "Gram": "సెనగలు",
+    "Mustard": "ఆవాలు",
+
+    /// 🌶️ Volatile crops
+    "Tomato": "టమోటా",
+    "Onion": "ఉల్లిపాయ",
+    "Potato": "బంగాళాదుంప",
+    "Chilli": "మిర్చి",
+    "Capsicum": "క్యాప్సికమ్",
   };
 
   void calculateProfit() {
@@ -60,8 +69,12 @@ class _ProfitScreenState extends State<ProfitScreen> {
     showResultDialog(output);
   }
 
-  /// 🔥 ANIMATED POPUP
+  /// 🔥 UPDATED RESULT DIALOG WITH VOLATILITY
   void showResultDialog(Map<String, dynamic> result) {
+    double round2(double v) => double.parse(v.toStringAsFixed(2));
+
+    bool isVolatile = result['isVolatile'] ?? false;
+
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -81,7 +94,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
               ),
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
@@ -97,9 +109,37 @@ class _ProfitScreenState extends State<ProfitScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 10),
+
+                    /// ⚠️ Volatility Tag
+                    if (isVolatile)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade200,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          "⚠️ High Price Volatility Crop",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    else
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade200,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          "✅ MSP Supported Crop (Stable)",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+
                     const SizedBox(height: 12),
 
-                    /// 🌾 Yield Card
+                    /// 🌾 Yield
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -107,55 +147,70 @@ class _ProfitScreenState extends State<ProfitScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        "Yield: ${result['yieldKinta'].toStringAsFixed(1)} Kinta "
-                            "(${result['yieldKg'].toStringAsFixed(0)} kg)",
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        "Total Yield: ${round2(result['yieldKinta'])} Quintal "
+                            "(${round2(result['yieldKg'])} kg)",
                       ),
                     ),
 
                     const SizedBox(height: 10),
 
-                    Text("Revenue: ₹${result['revenue'].toStringAsFixed(0)}"),
-                    Text("Cost: ₹${result['cost'].toStringAsFixed(0)}"),
+                    Text("Total Revenue: ₹${round2(result['revenue'])}"),
+                    Text("Total Cost: ₹${round2(result['cost'])}"),
 
                     const Divider(),
 
-                    /// 💰 Profit Card
+                    /// 💰 Profit
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: result['profit'] >= 0
-                            ? Colors.green.shade100
-                            : Colors.red.shade100,
-                        borderRadius: BorderRadius.circular(10),
+                            ? Colors.green.shade200
+                            : Colors.red.shade200,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        "Profit: ₹${result['profit'].toStringAsFixed(0)}",
-                        style: TextStyle(
-                          color: result['profit'] >= 0
-                              ? Colors.green.shade800
-                              : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            "Net Profit / నికర లాభం",
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            "₹${round2(result['profit'])}",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: result['profit'] >= 0
+                                  ? Colors.green.shade900
+                                  : Colors.red.shade900,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
                     const SizedBox(height: 10),
 
-                    Text("ROI: ${result['roi'].toStringAsFixed(1)} %"),
-                    Text("Margin: ${result['margin'].toStringAsFixed(1)} %"),
+                    Text(
+                        "Return on Investment (ROI): ${round2(result['roi'])} %"),
+                    Text(
+                        "Profit Margin: ${round2(result['margin'])} %"),
+
+                    const SizedBox(height: 6),
+
+                    /// MSP Display (Smart)
+                    if (result['msp'] > 0)
+                      Text(
+                          "Minimum Support Price (MSP): ₹${round2(result['msp'])} / kg "
+                              "(₹${round2(result['msp'] * 100)} / Quintal)")
+                    else
+                      const Text("No MSP (Market-driven crop)"),
 
                     Text(
-                        "MSP: ₹${(result['msp'] * 100).toStringAsFixed(0)} / Kinta"),
-
+                        "Break-even Price: ₹${round2(result['breakEvenPrice'])} / kg"),
+                    Text("Cost per kg: ₹${round2(result['costPerKg'])}"),
                     Text(
-                        "Break-even: ₹${result['breakEvenPrice'].toStringAsFixed(2)} / kg"),
-
-                    Text(
-                        "Cost per kg: ₹${result['costPerKg'].toStringAsFixed(2)}"),
-
-                    Text(
-                        "Profit per acre: ₹${result['profitPerAcre'].toStringAsFixed(0)}"),
+                        "Profit per Acre: ₹${round2(result['profitPerAcre'])}"),
 
                     const SizedBox(height: 12),
 
@@ -170,6 +225,9 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
                     const SizedBox(height: 6),
 
+                    if ((result['insights'] as List).isEmpty)
+                      const Text("• No major issues detected. Good job 👍"),
+
                     ...result['insights'].map<Widget>((insight) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
@@ -179,7 +237,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
                     const SizedBox(height: 15),
 
-                    /// ❌ Close Button
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -197,7 +254,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
         );
       },
 
-      /// ✨ Animation
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return Transform.scale(
           scale: Curves.easeOutBack.transform(animation.value),
@@ -282,7 +338,7 @@ class _ProfitScreenState extends State<ProfitScreen> {
             const SizedBox(height: 20),
 
             inputField("Land (acres)", "భూమి (ఎకరాలు)", acresController),
-            inputField("Yield per acre (Kinta)", "ఎకరానికి క్వింటాళ్లు", yieldController),
+            inputField("Yield per acre (Quintal)", "ఎకరానికి క్వింటాళ్లు", yieldController),
             inputField("Market price (₹/kg)", "మార్కెట్ ధర", priceController),
 
             const Divider(),
