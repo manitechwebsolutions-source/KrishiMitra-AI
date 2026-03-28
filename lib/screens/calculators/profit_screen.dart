@@ -18,6 +18,17 @@ class _ProfitScreenState extends State<ProfitScreen> {
   final TextEditingController laborController = TextEditingController();
   final TextEditingController irrigationController = TextEditingController();
 
+  // Focus nodes for auto-scroll
+  final FocusNode acresFocus = FocusNode();
+  final FocusNode yieldFocus = FocusNode();
+  final FocusNode priceFocus = FocusNode();
+  final FocusNode seedFocus = FocusNode();
+  final FocusNode fertilizerFocus = FocusNode();
+  final FocusNode laborFocus = FocusNode();
+  final FocusNode irrigationFocus = FocusNode();
+
+  final ScrollController scrollController = ScrollController();
+
   String selectedCrop = "Paddy";
 
   final Map<String, String> cropNames = {
@@ -33,6 +44,47 @@ class _ProfitScreenState extends State<ProfitScreen> {
     "Chilli": "మిర్చి",
     "Capsicum": "క్యాప్సికమ్",
   };
+
+  @override
+  void initState() {
+    super.initState();
+    // Add listeners to auto-scroll when focus changes
+    acresFocus.addListener(() => _scrollToFocus(acresFocus));
+    yieldFocus.addListener(() => _scrollToFocus(yieldFocus));
+    priceFocus.addListener(() => _scrollToFocus(priceFocus));
+    seedFocus.addListener(() => _scrollToFocus(seedFocus));
+    fertilizerFocus.addListener(() => _scrollToFocus(fertilizerFocus));
+    laborFocus.addListener(() => _scrollToFocus(laborFocus));
+    irrigationFocus.addListener(() => _scrollToFocus(irrigationFocus));
+  }
+
+  void _scrollToFocus(FocusNode focusNode) {
+    if (focusNode.hasFocus) {
+      // Wait for keyboard to appear
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (scrollController.hasClients) {
+          // Get the position of the focused field
+          final RenderBox? renderBox = focusNode.context?.findRenderObject() as RenderBox?;
+          if (renderBox != null) {
+            final position = renderBox.localToGlobal(Offset.zero);
+            final screenHeight = MediaQuery.of(context).size.height;
+            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+            // Calculate offset to bring field above keyboard
+            final offset = position.dy - (screenHeight - keyboardHeight) * 0.3;
+
+            if (offset > 0) {
+              scrollController.animateTo(
+                scrollController.offset + offset,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          }
+        }
+      });
+    }
+  }
 
   void calculateProfit() {
     final acres = double.tryParse(acresController.text);
@@ -84,6 +136,9 @@ class _ProfitScreenState extends State<ProfitScreen> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(16),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.85,
+              ),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
@@ -228,28 +283,32 @@ class _ProfitScreenState extends State<ProfitScreen> {
     );
   }
 
-  Widget inputField(String label, String telugu, TextEditingController controller) {
+  Widget inputField(String label, String telugu, TextEditingController controller, FocusNode focusNode) {
     final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$label / $telugu", style: theme.textTheme.bodyLarge),
-        const SizedBox(height: 6),
+        Text("$label / $telugu", style: theme.textTheme.bodyMedium),
+        const SizedBox(height: 4),
         TextField(
           controller: controller,
+          focusNode: focusNode,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
             hintText: "Enter value",
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            border: OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 8),
       ],
     );
   }
 
   @override
   void dispose() {
+    // Dispose all controllers
     acresController.dispose();
     yieldController.dispose();
     priceController.dispose();
@@ -257,68 +316,108 @@ class _ProfitScreenState extends State<ProfitScreen> {
     fertilizerController.dispose();
     laborController.dispose();
     irrigationController.dispose();
+
+    // Dispose all focus nodes
+    acresFocus.dispose();
+    yieldFocus.dispose();
+    priceFocus.dispose();
+    seedFocus.dispose();
+    fertilizerFocus.dispose();
+    laborFocus.dispose();
+    irrigationFocus.dispose();
+
+    // Dispose scroll controller
+    scrollController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final appBarHeight = AppBar().preferredSize.height;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final availableHeight = screenHeight - appBarHeight - statusBarHeight;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profit Calculator / లాభాల లెక్కింపు"),
+        toolbarHeight: 56,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Select Crop", style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(), // Allow scrolling only when needed
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: availableHeight,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Crop Selection
+                    Text("Select Crop", style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: selectedCrop,
+                      items: cropNames.entries.map((entry) {
+                        return DropdownMenuItem(
+                          value: entry.key,
+                          child: Text("${entry.key} (${entry.value})", style: const TextStyle(fontSize: 14)),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCrop = value!;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
 
-            DropdownButtonFormField<String>(
-              value: selectedCrop,
-              items: cropNames.entries.map((entry) {
-                return DropdownMenuItem(
-                  value: entry.key,
-                  child: Text("${entry.key} (${entry.value})"),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCrop = value!;
-                });
-              },
-              decoration: const InputDecoration(),
+                    // Input Fields with FocusNodes
+                    inputField("Land (acres)", "భూమి", acresController, acresFocus),
+                    inputField("Yield per acre", "క్వింటాళ్లు", yieldController, yieldFocus),
+                    inputField("Market price", "ధర", priceController, priceFocus),
+
+                    const Divider(height: 8),
+
+                    // Cost Details Section
+                    Text("Cost Details", style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 8),
+
+                    // Cost Fields with FocusNodes
+                    inputField("Seed cost", "విత్తన", seedController, seedFocus),
+                    inputField("Fertilizer cost", "ఎరువు", fertilizerController, fertilizerFocus),
+                    inputField("Labor cost", "కూలీ", laborController, laborFocus),
+                    inputField("Irrigation cost", "పారుదల", irrigationController, irrigationFocus),
+                  ],
+                ),
+
+                // Calculate Button
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 4),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: calculateProfit,
+                      child: const Text("Calculate", style: TextStyle(fontSize: 16)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 20),
-
-            inputField("Land (acres)", "భూమి", acresController),
-            inputField("Yield per acre", "క్వింటాళ్లు", yieldController),
-            inputField("Market price", "ధర", priceController),
-
-            const Divider(),
-
-            Text("Cost Details", style: theme.textTheme.titleLarge),
-
-            const SizedBox(height: 10),
-
-            inputField("Seed cost", "విత్తన", seedController),
-            inputField("Fertilizer cost", "ఎరువు", fertilizerController),
-            inputField("Labor cost", "కూలీ", laborController),
-            inputField("Irrigation cost", "పారుదల", irrigationController),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: calculateProfit,
-                child: const Text("Calculate"),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
