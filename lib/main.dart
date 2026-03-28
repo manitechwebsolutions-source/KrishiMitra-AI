@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krishimitra_ai/core/theme.dart'; // ✅ added
 import 'package:krishimitra_ai/screens/splash/splash_screen.dart';
 import 'package:krishimitra_ai/screens/home/home_screen.dart';
 import 'package:krishimitra_ai/screens/calculators/fertilizer_screen.dart';
@@ -43,20 +44,14 @@ class _KrishiMitraAppState extends State<KrishiMitraApp> {
       title: 'KrishiMitra AI',
       debugShowCheckedModeBanner: false,
 
-      /// 👇 Flow starts from Splash
       initialRoute: '/splash',
 
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        useMaterial3: true,
-      ),
+      /// ✅ NOW USING YOUR GLOBAL THEME
+      theme: appTheme,
 
       routes: {
         '/splash': (context) => const SplashScreen(),
-
-        /// ✅ FIX: Now language screen is USED
         '/language': (context) => const LanguageScreen(),
-
         '/home': (context) => const HomeScreen(),
         '/fertilizer': (context) => const FertilizerScreen(),
         '/profit': (context) => const ProfitScreen(),

@@ -7,13 +7,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5E6D3),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
-          /// MAIN CONTENT
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -29,52 +28,56 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             LanguageService.t("hello_welcome"),
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: theme.textTheme.titleLarge,
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(Icons.location_on,
-                                  size: 16, color: Colors.black54),
+                              Icon(Icons.location_on,
+                                  size: 16,
+                                  color: theme.textTheme.bodyMedium?.color),
                               const SizedBox(width: 4),
                               Text(
                                 LanguageService.t("app_name"),
-                                style: const TextStyle(color: Colors.black54),
+                                style: theme.textTheme.bodyMedium,
                               ),
                             ],
                           )
                         ],
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 4),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Icon(Icons.notifications_none),
-                        ),
+                      CircleAvatar(
+                        backgroundColor: theme.colorScheme.surface,
+                        child: Icon(Icons.notifications_none,
+                            color: theme.iconTheme.color),
                       ),
                     ],
                   ),
 
                   const SizedBox(height: 24),
 
-                  /// WEATHER (NO IMAGE HERE NOW)
-                  Column(
+                  /// WEATHER + WHEAT IMAGE
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "32°",
-                        style: TextStyle(
-                          fontSize: 56,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "32°",
+                              style: theme.textTheme.headlineLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              LanguageService.t("farm_location"),
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        LanguageService.t("farm_location"),
-                        style: const TextStyle(color: Colors.black54),
+                      Image.asset(
+                        "assets/images/wheat.png",
+                        height: 140, // 🔥 increased size
                       ),
                     ],
                   ),
@@ -82,34 +85,34 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   /// FEATURE CARDS
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                  GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: 2.6, // 🔥 slightly smaller buttons
                     children: [
                       _featureCard(
                         context,
-                        screenWidth,
                         Icons.science,
                         LanguageService.t("fertilizer"),
                             () => Navigator.pushNamed(context, '/fertilizer'),
                       ),
                       _featureCard(
                         context,
-                        screenWidth,
                         Icons.attach_money,
                         LanguageService.t("profit_calc"),
                             () => Navigator.pushNamed(context, '/profit'),
                       ),
                       _featureCard(
                         context,
-                        screenWidth,
                         Icons.camera_alt,
                         LanguageService.t("disease_detect"),
                             () {},
                       ),
                       _featureCard(
                         context,
-                        screenWidth,
                         Icons.account_balance,
                         LanguageService.t("gov_schemes"),
                             () {},
@@ -122,16 +125,13 @@ class HomeScreen extends StatelessWidget {
                   /// COMMODITIES
                   Text(
                     LanguageService.t("commodities"),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: theme.textTheme.titleLarge,
                   ),
 
                   const SizedBox(height: 12),
 
                   SizedBox(
-                    height: 90,
+                    height: 100,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -164,29 +164,17 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ),
 
-          /// ✅ WHEAT IMAGE (NOW PROPERLY POSITIONED)
-          Positioned(
-            top: 80,
-            right: 10,
-            child: Image.asset(
-              "assets/images/wheat.png",
-              height: 180,
-            ),
-
-
-          ),
-
           /// FLOATING NAV BAR
           Positioned(
             bottom: 20,
-            left: 20,
-            right: 20,
+            left: 0,
+            right: 0,
             child: Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(40),
@@ -196,32 +184,35 @@ class HomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
+                      color: theme.colorScheme.secondary.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(40),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 22,
-                          backgroundColor: Colors.black,
-                          child: Icon(Icons.home, color: Colors.white),
+                          backgroundColor: theme.colorScheme.secondary,
+                          child: Icon(Icons.home,
+                              color: theme.colorScheme.onSecondary),
                         ),
                         const SizedBox(width: 28),
                         GestureDetector(
                           onTap: () =>
                               Navigator.pushNamed(context, '/fertilizer'),
-                          child: const CircleAvatar(
+                          child: CircleAvatar(
                             radius: 22,
-                            backgroundColor: Color(0xFFFFC978),
-                            child: Icon(Icons.eco, color: Colors.black),
+                            backgroundColor: theme.colorScheme.primary,
+                            child: Icon(Icons.eco,
+                                color: theme.colorScheme.onPrimary),
                           ),
                         ),
                         const SizedBox(width: 28),
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 22,
-                          backgroundColor: Color(0xFFFFC978),
-                          child: Icon(Icons.person, color: Colors.black),
+                          backgroundColor: theme.colorScheme.primary,
+                          child: Icon(Icons.person,
+                              color: theme.colorScheme.onPrimary),
                         ),
                       ],
                     ),
@@ -237,31 +228,33 @@ class HomeScreen extends StatelessWidget {
 
   static Widget _featureCard(
       BuildContext context,
-      double screenWidth,
       IconData icon,
       String title,
       VoidCallback onTap,
       ) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: (screenWidth - 52) / 2,
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(12), // 🔥 reduced padding
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, size: 26),
-            const SizedBox(width: 10),
+            Icon(icon, size: 24, color: theme.iconTheme.color),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14, // 🔥 slightly increased text
+                ),
               ),
             )
           ],
@@ -272,15 +265,18 @@ class HomeScreen extends StatelessWidget {
 
   static Widget _commodityItem(
       BuildContext context, String name, String imagePath) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(15),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
+              color: theme.colorScheme.surface,
             ),
             child: Image.asset(imagePath, height: 30),
           ),
@@ -288,6 +284,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             name,
             textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium,
           ),
         ],
       ),

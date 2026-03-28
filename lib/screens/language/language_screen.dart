@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:krishimitra_ai/core/theme.dart';
-import 'package:krishimitra_ai/main.dart'; // ✅ IMPORTANT
+import 'package:krishimitra_ai/main.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -12,7 +11,6 @@ class LanguageScreen extends StatefulWidget {
 class _LanguageScreenState extends State<LanguageScreen> {
   String _selectedLanguage = '';
 
-  /// ✅ Only English + Telugu
   final List<Map<String, dynamic>> languages = [
     {
       'name': 'English',
@@ -33,18 +31,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
       _selectedLanguage = code;
     });
 
-    /// ✅ THIS is the correct way (triggers rebuild)
     await KrishiMitraApp.setLocale(context, code);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$name selected'),
-        backgroundColor: FarmColors.leafGreen,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         duration: const Duration(seconds: 1),
       ),
     );
 
-    /// Navigate after small delay
     Future.delayed(const Duration(milliseconds: 700), () {
       Navigator.pushReplacementNamed(context, '/home');
     });
@@ -52,20 +48,23 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Language / భాషను ఎంచుకోండి'),
-        backgroundColor: FarmColors.leafGreen,
-        foregroundColor: Colors.white,
       ),
+
+      /// 🌾 Background using theme instead of lightGreen
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              FarmColors.lightGreen,
-              Colors.white,
+              colors.primary.withOpacity(0.2),
+              theme.scaffoldBackgroundColor,
             ],
           ),
         ),
@@ -73,16 +72,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
           children: [
             const SizedBox(height: 20),
 
-            const Text(
+            Text(
               "Choose Your Language",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge,
             ),
 
             const SizedBox(height: 10),
 
-            const Text(
+            Text(
               "మీ భాషను ఎంచుకోండి",
-              style: TextStyle(color: Colors.black54),
+              style: theme.textTheme.bodyMedium,
             ),
 
             const SizedBox(height: 20),
@@ -98,25 +97,23 @@ class _LanguageScreenState extends State<LanguageScreen> {
                       _selectedLanguage == language['code'];
 
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
                     elevation: isSelected ? 4 : 1,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                       side: isSelected
-                          ? BorderSide(
-                          color: FarmColors.leafGreen, width: 2)
+                          ? BorderSide(color: colors.primary, width: 2)
                           : BorderSide.none,
                     ),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: isSelected
-                            ? FarmColors.leafGreen
-                            : FarmColors.lightGreen,
+                            ? colors.primary
+                            : colors.primary.withOpacity(0.2),
                         child: Icon(
                           language['icon'],
                           color: isSelected
-                              ? Colors.white
-                              : FarmColors.darkGreen,
+                              ? colors.onPrimary
+                              : colors.secondary,
                         ),
                       ),
                       title: Text(
@@ -126,14 +123,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
                               ? FontWeight.bold
                               : FontWeight.normal,
                           color: isSelected
-                              ? FarmColors.darkGreen
-                              : Colors.black87,
+                              ? colors.secondary
+                              : colors.onSurface,
                         ),
                       ),
                       subtitle: Text(language['native']),
                       trailing: isSelected
                           ? Icon(Icons.check_circle,
-                          color: FarmColors.leafGreen)
+                          color: colors.primary)
                           : null,
                       onTap: () =>
                           _selectLanguage(language['code'], language['name']),
@@ -143,28 +140,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
               ),
             ),
 
-            /// CONTINUE BUTTON
+            /// CONTINUE BUTTON (already themed globally ✅)
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selectedLanguage.isNotEmpty
-                      ? () {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: FarmColors.leafGreen,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text(
-                    'Continue / కొనసాగించండి',
-                    style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              child: ElevatedButton(
+                onPressed: _selectedLanguage.isNotEmpty
+                    ? () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                }
+                    : null,
+                child: const Text('Continue / కొనసాగించండి'),
               ),
             ),
           ],

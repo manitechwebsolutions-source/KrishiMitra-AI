@@ -1,64 +1,70 @@
 import 'package:flutter/material.dart';
 
 final ThemeData appTheme = ThemeData(
-  primarySwatch: Colors.green,
-  scaffoldBackgroundColor: Colors.white,
   useMaterial3: true,
 
-  /// GLOBAL VISUAL DENSITY (better alignment)
+  /// 🌾 BACKGROUND (HomeScreen beige)
+  scaffoldBackgroundColor: const Color(0xFFF5E6D3),
+
+  /// GLOBAL DENSITY
   visualDensity: VisualDensity.adaptivePlatformDensity,
 
-  /// APP BAR
+  /// 🎯 COLOR SCHEME (CORE COLORS)
+  colorScheme: const ColorScheme.light(
+    primary: Color(0xFFFFC978), // yellow accent
+    secondary: Color(0xFF3A3733), // dark (bottom nav style)
+    surface: Colors.white, // cards & containers
+    onPrimary: Colors.black,
+    onSecondary: Colors.white,
+    onSurface: Color(0xFF1E1E1E),
+    error: Colors.red,
+  ),
+
+  /// 🔝 APP BAR (minimal style)
   appBarTheme: const AppBarTheme(
     centerTitle: true,
     elevation: 0,
-    backgroundColor: Colors.green,
-    foregroundColor: Colors.white,
+    backgroundColor: Colors.transparent,
+    foregroundColor: Color(0xFF1E1E1E),
     titleTextStyle: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w600,
-      height: 1.2, // better vertical alignment
-      color: Colors.white,
+      color: Color(0xFF1E1E1E),
     ),
   ),
 
-  /// TEXT THEME (aligned spacing + height)
+  /// ✍️ TEXT THEME
   textTheme: const TextTheme(
     headlineLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      height: 1.2,
-      color: Color(0xFF1E3A2E),
+      color: Color(0xFF1E1E1E),
     ),
     headlineMedium: TextStyle(
       fontSize: 28,
       fontWeight: FontWeight.w600,
-      height: 1.25,
-      color: Color(0xFF1E3A2E),
+      color: Color(0xFF1E1E1E),
     ),
     titleLarge: TextStyle(
       fontSize: 22,
       fontWeight: FontWeight.w600,
-      height: 1.3,
-      color: Color(0xFF1E3A2E),
+      color: Color(0xFF1E1E1E),
     ),
     bodyLarge: TextStyle(
       fontSize: 16,
-      height: 1.4,
-      color: Color(0xFF2E5A3A),
+      color: Color(0xFF1E1E1E),
     ),
     bodyMedium: TextStyle(
       fontSize: 14,
-      height: 1.4,
-      color: Color(0xFF4A6F4A),
+      color: Colors.black54,
     ),
   ),
 
-  /// ELEVATED BUTTON
+  /// 🟡 ELEVATED BUTTON (yellow accent)
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
-      foregroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFFC978),
+      foregroundColor: Colors.black,
       minimumSize: const Size(double.infinity, 50),
       padding: const EdgeInsets.symmetric(vertical: 14),
       shape: RoundedRectangleBorder(
@@ -71,13 +77,13 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
-  /// OUTLINED BUTTON
+  /// 🟡 OUTLINED BUTTON
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: Colors.green,
+      foregroundColor: const Color(0xFFFFC978),
       minimumSize: const Size(double.infinity, 50),
       padding: const EdgeInsets.symmetric(vertical: 14),
-      side: const BorderSide(color: Colors.green, width: 1.5),
+      side: const BorderSide(color: Color(0xFFFFC978), width: 1.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -88,74 +94,62 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
-  /// INPUT FIELDS
+  /// 🧾 INPUT FIELDS
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.grey.shade50,
+    fillColor: Colors.white,
     contentPadding:
-    const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // FIXED
+    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide.none,
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.green.shade100),
+      borderSide: BorderSide(color: Colors.black12),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.green, width: 2),
+      borderSide: const BorderSide(color: Color(0xFFFFC978), width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.red, width: 1),
     ),
-    labelStyle: const TextStyle(color: Color(0xFF4A6F4A)),
+    labelStyle: const TextStyle(color: Colors.black54),
   ),
 
-  /// CARD THEME (IMPORTANT ALIGNMENT FIX)
+  /// 🧱 CARD THEME (feature cards)
   cardTheme: CardThemeData(
-    elevation: 2,
+    elevation: 0,
     margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+    color: Colors.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
-    color: Colors.white,
   ),
 
-  /// COLOR SCHEME
-  colorScheme: const ColorScheme.light(
-    primary: Colors.green,
-    secondary: Color(0xFFFFA726),
-    tertiary: Color(0xFF795548),
-    surface: Colors.white,
-    onPrimary: Colors.white,
-    onSecondary: Colors.black,
-    error: Colors.red,
-  ),
-
-  /// ICONS
+  /// 🎯 ICONS
   iconTheme: const IconThemeData(
-    color: Colors.green,
+    color: Color(0xFF1E1E1E),
     size: 24,
   ),
 
-  /// DIVIDER
-  dividerTheme: DividerThemeData(
-    color: Colors.green.shade100,
+  /// ➖ DIVIDER
+  dividerTheme: const DividerThemeData(
+    color: Colors.black12,
     thickness: 1,
     space: 20,
   ),
 );
 
-/// FARM COLORS (UNCHANGED)
+/// 🌾 OPTIONAL FARM COLORS (you can still use these if needed)
 class FarmColors {
   static const Color soilBrown = Color(0xFF795548);
-  static const Color sunYellow = Color(0xFFFFA726);
+  static const Color sunYellow = Color(0xFFFFC978);
   static const Color leafGreen = Color(0xFF4CAF50);
   static const Color waterBlue = Color(0xFF42A5F5);
   static const Color harvestOrange = Color(0xFFFF9800);
   static const Color wheatBeige = Color(0xFFF5E6D3);
-  static const Color darkGreen = Color(0xFF1E3A2E);
-  static const Color lightGreen = Color(0xFFE8F5E9);
+  static const Color dark = Color(0xFF3A3733);
 }
