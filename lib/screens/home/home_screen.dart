@@ -53,36 +53,49 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
 
-                  /// WEATHER + WHEAT IMAGE
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "32°",
-                              style: theme.textTheme.headlineLarge,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              LanguageService.t("farm_location"),
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ],
+                  /// WEATHER + WHEAT IMAGE USING STACK
+                  SizedBox(
+                    height: 140, // Fixed height for this section
+                    child: Stack(
+                      clipBehavior: Clip.none, // Allow image to overflow
+                      children: [
+                        /// Weather info on left
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "32°",
+                                style: theme.textTheme.headlineLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                LanguageService.t("farm_location"),
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Image.asset(
-                        "assets/images/wheat.png",
-                        height: 140, // 🔥 increased size
-                      ),
-                    ],
+
+                        /// Wheat image positioned freely
+                        Positioned(
+                          right: 0,
+                          top: -35, // Move upward - can go into header area
+                          child: Image.asset(
+                            "assets/images/wheat.png",
+                            height: 180,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
 
                   /// FEATURE CARDS
                   GridView.count(
@@ -91,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                     mainAxisSpacing: 12,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 2.6, // 🔥 slightly smaller buttons
+                    childAspectRatio: 2.6,
                     children: [
                       _featureCard(
                         context,
@@ -237,7 +250,7 @@ class HomeScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12), // 🔥 reduced padding
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(15),
@@ -253,7 +266,7 @@ class HomeScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14, // 🔥 slightly increased text
+                  fontSize: 14,
                 ),
               ),
             )
