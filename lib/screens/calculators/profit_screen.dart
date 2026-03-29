@@ -18,7 +18,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
   final TextEditingController laborController = TextEditingController();
   final TextEditingController irrigationController = TextEditingController();
 
-  // Focus nodes for auto-scroll
   final FocusNode acresFocus = FocusNode();
   final FocusNode yieldFocus = FocusNode();
   final FocusNode priceFocus = FocusNode();
@@ -48,7 +47,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
   @override
   void initState() {
     super.initState();
-    // Add listeners to auto-scroll when focus changes
     acresFocus.addListener(() => _scrollToFocus(acresFocus));
     yieldFocus.addListener(() => _scrollToFocus(yieldFocus));
     priceFocus.addListener(() => _scrollToFocus(priceFocus));
@@ -60,18 +58,17 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
   void _scrollToFocus(FocusNode focusNode) {
     if (focusNode.hasFocus) {
-      // Wait for keyboard to appear
       Future.delayed(const Duration(milliseconds: 300), () {
         if (scrollController.hasClients) {
-          // Get the position of the focused field
-          final RenderBox? renderBox = focusNode.context?.findRenderObject() as RenderBox?;
+          final RenderBox? renderBox =
+          focusNode.context?.findRenderObject() as RenderBox?;
           if (renderBox != null) {
             final position = renderBox.localToGlobal(Offset.zero);
             final screenHeight = MediaQuery.of(context).size.height;
             final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-            // Calculate offset to bring field above keyboard
-            final offset = position.dy - (screenHeight - keyboardHeight) * 0.3;
+            final offset =
+                position.dy - (screenHeight - keyboardHeight) * 0.3;
 
             if (offset > 0) {
               scrollController.animateTo(
@@ -98,7 +95,7 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
     if (acres == null || yieldKinta == null || pricePerKg == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter valid inputs / సరైన వివరాలు ఇవ్వండి")),
+        const SnackBar(content: Text("సరైన వివరాలు ఇవ్వండి / Enter valid inputs")),
       );
       return;
     }
@@ -147,17 +144,12 @@ class _ProfitScreenState extends State<ProfitScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Title
                     Center(
-                      child: Text(
-                        "Result / ఫలితం",
-                        style: theme.textTheme.titleLarge,
-                      ),
+                      child: Text("ఫలితం / Result",
+                          style: theme.textTheme.titleLarge),
                     ),
-
                     const SizedBox(height: 10),
 
-                    /// Volatility Tag
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -176,7 +168,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
                     const SizedBox(height: 12),
 
-                    /// Yield
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -196,7 +187,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
                     const Divider(),
 
-                    /// Profit
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
@@ -208,7 +198,7 @@ class _ProfitScreenState extends State<ProfitScreen> {
                       ),
                       child: Column(
                         children: [
-                          const Text("Net Profit / నికర లాభం"),
+                          const Text("Net Profit"),
                           const SizedBox(height: 5),
                           Text(
                             "₹${round2(result['profit'])}",
@@ -242,11 +232,7 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
                     const SizedBox(height: 12),
 
-                    Text(
-                      "Insights",
-                      style: theme.textTheme.titleMedium,
-                    ),
-
+                    Text("Insights", style: theme.textTheme.titleMedium),
                     const SizedBox(height: 6),
 
                     if ((result['insights'] as List).isEmpty)
@@ -283,53 +269,31 @@ class _ProfitScreenState extends State<ProfitScreen> {
     );
   }
 
-  Widget inputField(String label, String telugu, TextEditingController controller, FocusNode focusNode) {
+  Widget inputField(String label, String telugu,
+      TextEditingController controller, FocusNode focusNode) {
     final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$label / $telugu", style: theme.textTheme.bodyMedium),
-        const SizedBox(height: 4),
+        Text("$telugu / $label", style: theme.textTheme.bodyMedium),
+        const SizedBox(height: 3),
         TextField(
           controller: controller,
           focusNode: focusNode,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            hintText: "Enter value",
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            isDense: true,
+            hintText: "విలువలు నమోదు చేయండి",
+            hintStyle: TextStyle(color: Colors.grey),
+            contentPadding:
+            EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             border: OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    // Dispose all controllers
-    acresController.dispose();
-    yieldController.dispose();
-    priceController.dispose();
-    seedController.dispose();
-    fertilizerController.dispose();
-    laborController.dispose();
-    irrigationController.dispose();
-
-    // Dispose all focus nodes
-    acresFocus.dispose();
-    yieldFocus.dispose();
-    priceFocus.dispose();
-    seedFocus.dispose();
-    fertilizerFocus.dispose();
-    laborFocus.dispose();
-    irrigationFocus.dispose();
-
-    // Dispose scroll controller
-    scrollController.dispose();
-
-    super.dispose();
   }
 
   @override
@@ -342,77 +306,69 @@ class _ProfitScreenState extends State<ProfitScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profit Calculator / లాభాల లెక్కింపు"),
-        toolbarHeight: 56,
+        title: const Text("లాభాల లెక్కింపు / Profit Calculator"),
       ),
       body: SingleChildScrollView(
         controller: scrollController,
-        physics: const AlwaysScrollableScrollPhysics(), // Allow scrolling only when needed
+        physics: const AlwaysScrollableScrollPhysics(),
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: availableHeight,
-          ),
+          constraints: BoxConstraints(minHeight: availableHeight),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Crop Selection
-                    Text("Select Crop", style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      value: selectedCrop,
-                      items: cropNames.entries.map((entry) {
-                        return DropdownMenuItem(
-                          value: entry.key,
-                          child: Text("${entry.key} (${entry.value})", style: const TextStyle(fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedCrop = value!;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                Text("పంటను ఎంచుకోండి / Select Crop",
+                    style: theme.textTheme.titleLarge),
+                const SizedBox(height: 6),
 
-                    // Input Fields with FocusNodes
-                    inputField("Land (acres)", "భూమి", acresController, acresFocus),
-                    inputField("Yield per acre", "క్వింటాళ్లు", yieldController, yieldFocus),
-                    inputField("Market price", "ధర", priceController, priceFocus),
-
-                    const Divider(height: 8),
-
-                    // Cost Details Section
-                    Text("Cost Details", style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 8),
-
-                    // Cost Fields with FocusNodes
-                    inputField("Seed cost", "విత్తన", seedController, seedFocus),
-                    inputField("Fertilizer cost", "ఎరువు", fertilizerController, fertilizerFocus),
-                    inputField("Labor cost", "కూలీ", laborController, laborFocus),
-                    inputField("Irrigation cost", "పారుదల", irrigationController, irrigationFocus),
-                  ],
+                DropdownButtonFormField<String>(
+                  value: selectedCrop,
+                  items: cropNames.entries.map((entry) {
+                    return DropdownMenuItem(
+                      value: entry.key,
+                      child: Text("${entry.value} (${entry.key})"),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCrop = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    border: OutlineInputBorder(),
+                  ),
                 ),
 
-                // Calculate Button
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 4),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 44,
-                    child: ElevatedButton(
-                      onPressed: calculateProfit,
-                      child: const Text("Calculate", style: TextStyle(fontSize: 16)),
-                    ),
+                const SizedBox(height: 12),
+
+                inputField("Land (acres)", "భూమి", acresController, acresFocus),
+                inputField("Yield per acre", "క్వింటాళ్లు", yieldController, yieldFocus),
+                inputField("Market price", "ధర", priceController, priceFocus),
+
+                const Divider(height: 8),
+
+                Text("ఖర్చు వివరాలు / Cost Details",
+                    style: theme.textTheme.titleLarge),
+
+                const SizedBox(height: 8),
+
+                inputField("Seed cost", "విత్తన", seedController, seedFocus),
+                inputField("Fertilizer cost", "ఎరువు", fertilizerController, fertilizerFocus),
+                inputField("Labor cost", "కూలీ", laborController, laborFocus),
+                inputField("Irrigation cost", "పారుదల", irrigationController, irrigationFocus),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: calculateProfit,
+                    child: const Text("Calculate"),
                   ),
                 ),
               ],
