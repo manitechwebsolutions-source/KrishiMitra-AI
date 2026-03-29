@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  intl: ^0.19.0
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1
 
@@ -18,6 +19,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1   # ✅ added
 
 flutter:
   uses-material-design: true
@@ -25,4 +27,9 @@ flutter:
   assets:
     - assets/images/
     - assets/lang/
-  # Assets section removed - will be added manually when needed
+
+# ✅ Launcher icon configuration
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"

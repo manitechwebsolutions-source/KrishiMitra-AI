@@ -1,182 +1,174 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../calculators/fertilizer_screen.dart';
+import 'package:krishimitra_ai/services/language_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5E6D3),
+    final theme = Theme.of(context);
 
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
-
-          /// MAIN CONTENT
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// HEADER
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: const [
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            "Hello,Welcome👋 to",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            LanguageService.t("hello_welcome"),
+                            style: theme.textTheme.titleLarge,
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Row(
                             children: [
                               Icon(Icons.location_on,
                                   size: 16,
-                                  color: Colors.black54),
-                              SizedBox(width: 4),
+                                  color: theme.textTheme.bodyMedium?.color),
+                              const SizedBox(width: 4),
                               Text(
-                                "KrishiMitra",
-                                style: TextStyle(
-                                    color: Colors.black54),
+                                LanguageService.t("app_name"),
+                                style: theme.textTheme.bodyMedium,
                               ),
                             ],
                           )
                         ],
                       ),
-                      const CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                            Icons.notifications_none),
+                      CircleAvatar(
+                        backgroundColor: theme.colorScheme.surface,
+                        child: Icon(Icons.notifications_none,
+                            color: theme.iconTheme.color),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 8),
 
-                  /// WEATHER
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "32°",
-                        style: TextStyle(
-                          fontSize: 60,
-                          fontWeight: FontWeight.bold,
+                  /// WEATHER + WHEAT IMAGE USING STACK
+                  SizedBox(
+                    height: 140, // Fixed height for this section
+                    child: Stack(
+                      clipBehavior: Clip.none, // Allow image to overflow
+                      children: [
+                        /// Weather info on left
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "32°",
+                                style: theme.textTheme.headlineLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                LanguageService.t("farm_location"),
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Image.asset(
-                        "assets/images/wheat.png",
-                        height: 90,
-                      ),
-                    ],
+
+                        /// Wheat image positioned freely
+                        Positioned(
+                          right: 0,
+                          top: -35, // Move upward - can go into header area
+                          child: Image.asset(
+                            "assets/images/wheat.png",
+                            height: 180,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const Text(
-                    "Sonoma County",
-                    style:
-                    TextStyle(color: Colors.black54),
-                  ),
-
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 8),
 
                   /// FEATURE CARDS
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
+                  GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: 2.6,
                     children: [
-
                       _featureCard(
                         context,
                         Icons.science,
-                        "Fertilizer",
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                              const FertilizerScreen(),
-                            ),
-                          );
-                        },
+                        LanguageService.t("fertilizer"),
+                            () => Navigator.pushNamed(context, '/fertilizer'),
                       ),
-
                       _featureCard(
                         context,
                         Icons.attach_money,
-                        "Profit Calc",
-                            () {},
+                        LanguageService.t("profit_calc"),
+                            () => Navigator.pushNamed(context, '/profit'),
                       ),
-
                       _featureCard(
                         context,
                         Icons.camera_alt,
-                        "Disease Detect",
+                        LanguageService.t("disease_detect"),
                             () {},
                       ),
-
                       _featureCard(
                         context,
                         Icons.account_balance,
-                        "Gov Schemes",
+                        LanguageService.t("gov_schemes"),
                             () {},
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
 
                   /// COMMODITIES
-                  const Text(
-                    "Commodities & Food",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                  Text(
+                    LanguageService.t("commodities"),
+                    style: theme.textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 15),
+
+                  const SizedBox(height: 12),
 
                   SizedBox(
-                    height: 90,
+                    height: 100,
                     child: ListView(
-                      scrollDirection:
-                      Axis.horizontal,
+                      scrollDirection: Axis.horizontal,
                       children: [
+                        _commodityItem(context,
+                            LanguageService.t("rice"), "assets/images/rice.jpg"),
+                        _commodityItem(context,
+                            LanguageService.t("corn"), "assets/images/corn.jpeg"),
                         _commodityItem(
                             context,
-                            "Rice",
-                            "assets/images/rice.jpg"),
-                        _commodityItem(
-                            context,
-                            "Corn",
-                            "assets/images/corn.jpeg"),
-                        _commodityItem(
-                            context,
-                            "Grapes",
+                            LanguageService.t("grapes"),
                             "assets/images/grapes.jpg"),
                         _commodityItem(
                             context,
-                            "Potato",
+                            LanguageService.t("potato"),
                             "assets/images/potato.jpg"),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
 
                   /// FIELD IMAGE
                   ClipRRect(
-                    borderRadius:
-                    BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20),
                     child: Image.asset(
                       "assets/images/field.jpeg",
                       height: 180,
@@ -185,94 +177,55 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 150),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ),
 
-          /// FLOATING BLUR NAVIGATION
+          /// FLOATING NAV BAR
           Positioned(
-            bottom: 30,
+            bottom: 20,
             left: 0,
             right: 0,
             child: Center(
               child: ClipRRect(
-                borderRadius:
-                BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(40),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                      sigmaX: 15, sigmaY: 15),
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.black
-                          .withOpacity(0.7),
-                      borderRadius:
-                      BorderRadius.circular(
-                          40),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black
-                              .withOpacity(0.3),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        )
-                      ],
+                      color: theme.colorScheme.secondary.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(40),
                     ),
                     child: Row(
-                      mainAxisSize:
-                      MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 22,
-                          backgroundColor:
-                          Colors.black,
-                          child: Icon(
-                            Icons.home,
-                            color:
-                            Colors.white,
-                          ),
+                          backgroundColor: theme.colorScheme.secondary,
+                          child: Icon(Icons.home,
+                              color: theme.colorScheme.onSecondary),
                         ),
-
-                        const SizedBox(width: 30),
-
+                        const SizedBox(width: 28),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                const FertilizerScreen(),
-                              ),
-                            );
-                          },
-                          child:
-                          const CircleAvatar(
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/fertilizer'),
+                          child: CircleAvatar(
                             radius: 22,
-                            backgroundColor:
-                            Color(0xFFFFC978),
-                            child: Icon(
-                              Icons.eco,
-                              color: Colors.black,
-                            ),
+                            backgroundColor: theme.colorScheme.primary,
+                            child: Icon(Icons.eco,
+                                color: theme.colorScheme.onPrimary),
                           ),
                         ),
-
-                        const SizedBox(width: 30),
-
-                        const CircleAvatar(
+                        const SizedBox(width: 28),
+                        CircleAvatar(
                           radius: 22,
-                          backgroundColor:
-                          Color(0xFFFFC978),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.black,
-                          ),
+                          backgroundColor: theme.colorScheme.primary,
+                          child: Icon(Icons.person,
+                              color: theme.colorScheme.onPrimary),
                         ),
                       ],
                     ),
@@ -286,34 +239,34 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// FIXED FEATURE CARD
   static Widget _featureCard(
       BuildContext context,
       IconData icon,
       String title,
       VoidCallback onTap,
       ) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 160,
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 28),
-            const SizedBox(width: 10),
-
-            /// FIX
+            Icon(icon, size: 24, color: theme.iconTheme.color),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 title,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
             )
@@ -324,45 +277,29 @@ class HomeScreen extends StatelessWidget {
   }
 
   static Widget _commodityItem(
-      BuildContext context,
-      String name,
-      String imagePath) {
+      BuildContext context, String name, String imagePath) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding:
-      const EdgeInsets.only(right: 15),
-      child: GestureDetector(
-        onTap: () {
-          if (name == "Rice") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                const FertilizerScreen(),
-              ),
-            );
-          }
-        },
-        child: Column(
-          children: [
-            Container(
-              padding:
-              const EdgeInsets.all(
-                  15),
-              decoration:
-              const BoxDecoration(
-                shape:
-                BoxShape.circle,
-                color:
-                Colors.white,
-              ),
-              child: Image.asset(
-                  imagePath,
-                  height: 30),
+      padding: const EdgeInsets.only(right: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: theme.colorScheme.surface,
             ),
-            const SizedBox(height: 6),
-            Text(name),
-          ],
-        ),
+            child: Image.asset(imagePath, height: 30),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
       ),
     );
   }

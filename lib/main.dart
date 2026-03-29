@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'core/app_routes.dart';
-import 'screens/splash/splash_screen.dart';
-import 'services/language_service.dart';
+import 'package:krishimitra_ai/core/theme.dart'; // ✅ added
+import 'package:krishimitra_ai/screens/splash/splash_screen.dart';
+import 'package:krishimitra_ai/screens/home/home_screen.dart';
+import 'package:krishimitra_ai/screens/calculators/fertilizer_screen.dart';
+import 'package:krishimitra_ai/screens/calculators/profit_screen.dart';
+import 'package:krishimitra_ai/services/language_service.dart';
+import 'package:krishimitra_ai/screens/language/language_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +19,11 @@ void main() async {
 class KrishiMitraApp extends StatefulWidget {
   const KrishiMitraApp({super.key});
 
-  static void setLocale(BuildContext context, String lang) async {
-    await LanguageService.loadLanguage(lang);
-
+  static Future<void> setLocale(BuildContext context, String lang) async {
     final state =
-        context.findAncestorStateOfType<_KrishiMitraAppState>();
+    context.findAncestorStateOfType<_KrishiMitraAppState>();
+
+    await LanguageService.loadLanguage(lang);
 
     state?.changeLanguage();
   }
@@ -29,8 +33,8 @@ class KrishiMitraApp extends StatefulWidget {
 }
 
 class _KrishiMitraAppState extends State<KrishiMitraApp> {
-
   void changeLanguage() {
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -39,14 +43,19 @@ class _KrishiMitraAppState extends State<KrishiMitraApp> {
     return MaterialApp(
       title: 'KrishiMitra AI',
       debugShowCheckedModeBanner: false,
-      routes: appRoutes,
-      initialRoute: '/splash',
-      home: const SplashScreen(),
 
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        useMaterial3: true,
-      ),
+      initialRoute: '/splash',
+
+      /// ✅ NOW USING YOUR GLOBAL THEME
+      theme: appTheme,
+
+      routes: {
+        '/splash': (context) => const SplashScreen(),
+        '/language': (context) => const LanguageScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/fertilizer': (context) => const FertilizerScreen(),
+        '/profit': (context) => const ProfitScreen(),
+      },
 
       onUnknownRoute: (settings) {
         return MaterialPageRoute(

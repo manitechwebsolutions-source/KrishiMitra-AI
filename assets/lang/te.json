@@ -1,10 +1,14 @@
 {
-  "home": "హోమ్",
-  "fertilizer_calculator": "ఎరువుల లెక్కింపు",
-  "profit_calculator": "లాభం లెక్కింపు",
-  "disease_detection": "రోగ నిర్ధారణ",
-  "government_schemes": "ప్రభుత్వ పథకాలు",
-  "select_crop": "పంటను ఎంచుకోండి",
-  "field_size": "భూమి పరిమాణం (ఎకరాలు)",
-  "calculate": "లెక్కించు"
+  "hello_welcome": "హలో, స్వాగతం 👋",
+  "app_name": "కృషిమిత్ర",
+  "farm_location": "మీ వ్యవసాయ స్థలం",
+  "fertilizer": "ఎరువు",
+  "profit_calc": "లాభ లెక్కింపు",
+  "disease_detect": "వ్యాధి గుర్తింపు",
+  "gov_schemes": "ప్రభుత్వ పథకాలు",
+  "commodities": "పంటలు & ఆహారం",
+  "rice": "వరి",
+  "corn": "మొక్కజొన్న",
+  "grapes": "ద్రాక్ష",
+  "potato": "బంగాళాదుంప"
 }
